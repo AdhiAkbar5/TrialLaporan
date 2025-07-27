@@ -1,5 +1,4 @@
-<!DOCTYPE html>
-<html lang="id">
+<!DOCTYPE html><html lang="id">
 <head>
   <meta charset="UTF-8" />
   <title>Laporan Shift</title>
@@ -56,7 +55,6 @@
     button:hover {
       background: #218838;
     }
-
     .label-quality {
       background-color: yellow;
       color: black;
@@ -72,57 +70,118 @@
       color: black;
       border: 2px solid white;
     }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 20px;
+    }
+    th, td {
+      padding: 8px;
+      border: 1px solid #ccc;
+      text-align: left;
+    }
+    th {
+      background-color: #28a745;
+      color: white;
+    }
+    .filter-container {
+      margin-top: 30px;
+      text-align: left;
+    }
+    .filter-container label {
+      display: inline-block;
+      margin-right: 10px;
+    }
+    .filter-container select {
+      margin-right: 20px;
+    }
   </style>
 </head>
 <body>
   <div class="container">
-    <img src="Logo-dunlopp.jpg" alt="Logo Dunlop" class="logo" />
+    <img src="Logo-dunlopp.jpg" alt="Logo Dunlop" class="logo" /><h1>LAPORAN ANTAR SHIFT</h1>
+<h2>CURING F#2</h2>
 
-    <h1>LAPORAN ANTAR SHIFT</h1>
-    <h2>CURING F#2</h2>
+<form id="laporanForm">
+  <label for="tanggal">Tanggal</label>
+  <input type="datetime-local" name="tanggal" required />
 
-    <form id="laporanForm">
-      <label for="tanggal">Tanggal</label>
-      <input type="datetime-local" name="tanggal" required />
+  <label for="shift">Shift</label>
+  <select name="shift" required>
+    <option value="1">1</option>
+    <option value="2">2</option>
+    <option value="3">3</option>
+  </select>
 
-      <label for="shift">Shift</label>
-      <select name="shift" required>
-        <option value="1">1</option>
-        <option value="2">2</option>
-        <option value="3">3</option>
-      </select>
+  <label for="GRUP">GRUP</label>
+  <select name="GRUP" required>
+    <option value="A">A</option>
+    <option value="B">B</option>
+    <option value="C">C</option>
+    <option value="D">D</option>
+  </select>
 
-      <label for="GRUP">GRUP</label>
-      <select name="GRUP" required>
-        <option value="A">A</option>
-        <option value="B">B</option>
-        <option value="C">C</option>
-        <option value="D">D</option>
-      </select>
+  <label for="nama">PIC</label>
+  <input type="text" name="nama" required />
 
-      <label for="nama">PIC</label>
-      <input type="text" name="nama" required />
+  <label for="quality_trouble" class="label-quality">Quality Trouble</label>
+  <textarea name="quality_trouble" rows="6"></textarea>
 
-      <label for="quality_trouble" class="label-quality">Quality Trouble</label>
-      <textarea name="quality_trouble" rows="6"></textarea>
+  <label for="mechanical_trouble" class="label-mechanical">Mechanical Trouble</label>
+  <textarea name="mechanical_trouble" rows="6"></textarea>
 
-      <label for="mechanical_trouble" class="label-mechanical">Mechanical Trouble</label>
-      <textarea name="mechanical_trouble" rows="6"></textarea>
+  <label for="mold_trouble" class="label-mold">Mold Trouble</label>
+  <textarea name="mold_trouble" rows="6"></textarea>
 
-      <label for="mold_trouble" class="label-mold">Mold Trouble</label>
-      <textarea name="mold_trouble" rows="6"></textarea>
+  <label for="catatan">Catatan untuk Shift Berikutnya</label>
+  <textarea name="catatan" rows="3"></textarea>
 
-      <label for="catatan">Catatan untuk Shift Berikutnya</label>
-      <textarea name="catatan" rows="3"></textarea>
+  <button type="submit">Kirim Laporan</button>
+  <h1>SEMOGA SELAMAT</h1>
+</form>
 
-      <button type="submit">Kirim Laporan</button>
-      <h1>SEMOGA SELAMAT</h1>
-    </form>
-  </div>
+<div class="filter-container">
+  <label for="filterShift">Filter Shift:</label>
+  <select id="filterShift">
+    <option value="">Semua</option>
+    <option value="1">1</option>
+    <option value="2">2</option>
+    <option value="3">3</option>
+  </select>
 
-  <script>
+  <label for="filterGrup">Filter Grup:</label>
+  <select id="filterGrup">
+    <option value="">Semua</option>
+    <option value="A">A</option>
+    <option value="B">B</option>
+    <option value="C">C</option>
+    <option value="D">D</option>
+  </select>
+
+  <button onclick="tampilkanData()">Tampilkan</button>
+</div>
+
+<table id="dataTable">
+  <thead>
+    <tr>
+      <th>Tanggal</th>
+      <th>Shift</th>
+      <th>Grup</th>
+      <th>PIC</th>
+      <th>Quality</th>
+      <th>Mechanical</th>
+      <th>Mold</th>
+      <th>Catatan</th>
+    </tr>
+  </thead>
+  <tbody></tbody>
+</table>
+
+  </div>  <script>
     const scriptURL = 'https://script.google.com/macros/s/AKfycbwOxN6EoFDS8iiOwinN-7FApqHpP_AmIVtRP9rxmi3Z6zK9GcHOiJyOOEy5xp0lsuFd/exec';
+    const dataURL = 'https://script.google.com/macros/s/YOUR_READ_SCRIPT_ID/exec';
     const form = document.getElementById('laporanForm');
+    const tableBody = document.querySelector('#dataTable tbody');
 
     form.addEventListener('submit', e => {
       e.preventDefault();
@@ -134,6 +193,7 @@
         .then(response => {
           alert('✅ Laporan berhasil dikirim!');
           form.reset();
+          tampilkanData();
           submitButton.disabled = false;
           submitButton.innerText = 'Kirim Laporan';
         })
@@ -144,9 +204,37 @@
           submitButton.innerText = 'Kirim Laporan';
         });
     });
-  </script>
-  <marquee behavior="scroll" direction="left" scrollamount="5" style="background: yellow; font-weight: bold; padding: 10px; font-size: 16px;">
-  Selalu berhati-hati dalam bekerja. Lakukan SPT dengan lengkap.
-</marquee>
+
+    function tampilkanData() {
+      fetch(dataURL)
+        .then(response => response.json())
+        .then(data => {
+          const shiftFilter = document.getElementById('filterShift').value;
+          const grupFilter = document.getElementById('filterGrup').value;
+          tableBody.innerHTML = '';
+          data.forEach(row => {
+            if ((shiftFilter === '' || row.shift === shiftFilter) && (grupFilter === '' || row.grup === grupFilter)) {
+              const tr = document.createElement('tr');
+              tr.innerHTML = `
+                <td>${row.tanggal}</td>
+                <td>${row.shift}</td>
+                <td>${row.grup}</td>
+                <td>${row.nama}</td>
+                <td>${row.quality_trouble}</td>
+                <td>${row.mechanical_trouble}</td>
+                <td>${row.mold_trouble}</td>
+                <td>${row.catatan}</td>
+              `;
+              tableBody.appendChild(tr);
+            }
+          });
+        })
+        .catch(error => console.error('Gagal ambil data:', error));
+    }
+
+    window.onload = tampilkanData;
+  </script>  <marquee behavior="scroll" direction="left" scrollamount="5" style="background: yellow; font-weight: bold; padding: 10px; font-size: 16px;">
+    Selalu berhati-hati dalam bekerja. Lakukan SPT dengan lengkap.
+  </marquee>
 </body>
 </html>
