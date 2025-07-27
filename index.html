@@ -57,7 +57,6 @@
       background: #218838;
     }
 
-    /* Warna label khusus */
     .label-quality {
       background-color: yellow;
       color: black;
@@ -77,13 +76,12 @@
 </head>
 <body>
   <div class="container">
-    <!-- LOGO di bagian atas tengah -->
     <img src="Logo-dunlopp.jpg" alt="Logo Dunlop" class="logo" />
 
     <h1>LAPORAN ANTAR SHIFT</h1>
     <h2>CURING F#2</h2>
 
-    <form action="https://script.google.com/macros/s/AKfycbyKA9XHFA6tanEpA4AtDyUhVWoMF4VSuUCfP_FqHZNJGRM8tIovroZqkni6s8qZM0y5/exec" method="POST">
+    <form id="laporanForm">
       <label for="tanggal">Tanggal</label>
       <input type="datetime-local" name="tanggal" required />
 
@@ -121,5 +119,31 @@
       <h1>SEMOGA SELAMAT</h1>
     </form>
   </div>
+
+  <script>
+    const scriptURL = 'https://script.google.com/macros/s/AKfycbyKA9XHFA6tanEpA4AtDyUhVWoMF4VSuUCfP_FqHZNJGRM8tIovroZqkni6s8qZM0y5/exec';
+    const form = document.getElementById('laporanForm');
+
+    form.addEventListener('submit', e => {
+      e.preventDefault();
+      const submitButton = form.querySelector('button[type="submit"]');
+      submitButton.disabled = true;
+      submitButton.innerText = 'Mengirim...';
+
+      fetch(scriptURL, { method: 'POST', body: new FormData(form) })
+        .then(response => {
+          alert('✅ Laporan berhasil dikirim!');
+          form.reset();
+          submitButton.disabled = false;
+          submitButton.innerText = 'Kirim Laporan';
+        })
+        .catch(error => {
+          alert('❌ Gagal mengirim laporan. Coba lagi.');
+          console.error('Error!', error.message);
+          submitButton.disabled = false;
+          submitButton.innerText = 'Kirim Laporan';
+        });
+    });
+  </script>
 </body>
 </html>
