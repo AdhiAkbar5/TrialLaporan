@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <title>Laporan Shift</title>
+  <style>
+    body {
+      font-family: Arial;
+      padding: 30px;
+      background-color: #f4f4f4;
+    }
+    .container {
+      background: #fff;
+      padding: 20px;
+      border-radius: 10px;
+      max-width: 700px;
+      margin: auto;
+      text-align: center;
+    }
+    .logo {
+      width: 150px;
+      margin-bottom: 10px;
+    }
+    h1 {
+      background-color: yellow;
+      color: black;
+      padding: 10px;
+      border-radius: 10px;
+    }
+    label {
+      font-weight: bold;
+      display: block;
+      margin-top: 10px;
+      padding: 5px;
+      border-radius: 5px;
+      text-align: left;
+    }
+    input, select, textarea {
+      width: 100%;
+      padding: 8px;
+      margin-top: 5px;
+      border-radius: 5px;
+      border: 1px solid #ccc;
+      background-color: white;
+      color: black;
+    }
+    button {
+      margin-top: 20px;
+      background: #28a745;
+      color: #fff;
+      padding: 10px;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+    button:hover {
+      background: #218838;
+    }
+
+    /* Warna label khusus */
+    .label-quality {
+      background-color: yellow;
+      color: black;
+      border: 2px solid white;
+    }
+    .label-mechanical {
+      background-color: red;
+      color: black;
+      border: 2px solid white;
+    }
+    .label-mold {
+      background-color: green;
+      color: black;
+      border: 2px solid white;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <!-- LOGO di bagian atas tengah -->
+    <img src="Logo-dunlopp.jpg" alt="Logo Dunlop" class="logo" />
+
+    <h1>LAPORAN ANTAR SHIFT</h1>
+    <h2>CURING F#2</h2>
+
+    <form action="simpan_laporan.php" method="POST">
+      <label for="tanggal">Tanggal</label>
+      <input type="datetime-local" name="tanggal" required />
+
+      <label for="shift">Shift</label>
+      <select name="shift" required>
+        <option value="1">1</option>
+        <option value="2">2</option>
+        <option value="3">3</option>
+      </select>
+
+      <label for="GRUP">GRUP</label>
+      <select name="GRUP" required>
+        <option value="A">A</option>
+        <option value="B">B</option>
+        <option value="C">C</option>
+        <option value="D">D</option>
+      </select>
+
+      <label for="nama">PIC</label>
+      <input type="text" name="nama" required />
+
+      <label for="quality_trouble" class="label-quality">Quality Trouble</label>
+      <textarea name="quality_trouble" rows="6"></textarea>
+
+      <label for="mechanical_trouble" class="label-mechanical">Mechanical Trouble</label>
+      <textarea name="mechanical_trouble" rows="6"></textarea>
+
+      <label for="mold_trouble" class="label-mold">Mold Trouble</label>
+      <textarea name="mold_trouble" rows="6"></textarea>
+
+      <label for="catatan">Catatan untuk Shift Berikutnya</label>
+      <textarea name="catatan" rows="3"></textarea>
+
+      <button type="submit">Kirim Laporan</button>
+      <h1>SEMOGA SELAMAT</h1>
+    </form>
+  </div>
+</body>
+</html>
