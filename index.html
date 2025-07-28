@@ -228,4 +228,235 @@
     }
   </script>
 </body>
+</htm<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <title>Laporan Shift</title>
+  <style>
+    body {
+      font-family: Arial;
+      padding: 30px;
+      background-color: #f4f4f4;
+    }
+    .container {
+      background: #fff;
+      padding: 20px;
+      border-radius: 10px;
+      max-width: 800px;
+      margin: auto;
+      text-align: center;
+    }
+    .logo {
+      width: 150px;
+      margin-bottom: 10px;
+    }
+    h1 {
+      background-color: yellow;
+      color: black;
+      padding: 10px;
+      border-radius: 10px;
+    }
+    label {
+      font-weight: bold;
+      display: block;
+      margin-top: 10px;
+      text-align: left;
+    }
+    input, select, textarea {
+      width: 100%;
+      padding: 8px;
+      margin-top: 5px;
+      border-radius: 5px;
+      border: 1px solid #ccc;
+    }
+    button {
+      margin-top: 20px;
+      background: #28a745;
+      color: #fff;
+      padding: 10px;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+    button:hover {
+      background: #218838;
+    }
+    .label-quality {
+      background-color: yellow;
+      color: black;
+    }
+    .label-mechanical {
+      background-color: red;
+      color: white;
+    }
+    .label-mold {
+      background-color: green;
+      color: white;
+    }
+    .filter-container {
+      margin-top: 30px;
+      text-align: left;
+    }
+    .filter-container label {
+      margin-right: 10px;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 20px;
+    }
+    th, td {
+      border: 1px solid #ccc;
+      padding: 8px;
+      text-align: left;
+    }
+    th {
+      background-color: #28a745;
+      color: white;
+    }
+  </style>
+</head>
+<body onload="tampilkanData()">
+  <div class="container">
+    <img src="Logo-dunlopkn.jpg" alt="Logo Dunlop" style="width: 100%; height: auto; display: block; margin: 0 auto;" />
+    <h1>LAPORAN ANTAR SHIFT</h1>
+    <h2>CURING F#2</h2>
+
+    <form id="laporanForm">
+      <label for="tanggal">Tanggal</label>
+      <input type="datetime-local" name="tanggal" required />
+
+      <label for="shift">Shift</label>
+      <select name="shift" required>
+        <option value="1">1</option>
+        <option value="2">2</option>
+        <option value="3">3</option>
+      </select>
+
+      <label for="GRUP">GRUP</label>
+      <select name="grup" required>
+        <option value="A">A</option>
+        <option value="B">B</option>
+        <option value="C">C</option>
+        <option value="D">D</option>
+      </select>
+
+      <label for="nama">PIC</label>
+      <input type="text" name="nama" required />
+
+      <label class="label-quality">Quality Trouble</label>
+      <textarea name="quality_trouble" rows="10"></textarea>
+
+      <label class="label-mechanical">Mechanical Trouble</label>
+      <textarea name="mechanical_trouble" rows="10"></textarea>
+
+      <label class="label-mold">Mold Trouble</label>
+      <textarea name="mold_trouble" rows="10"></textarea>
+
+      <label for="catatan">Catatan untuk Shift Berikutnya</label>
+      <textarea name="catatan" rows="5"></textarea>
+
+      <button type="submit">Kirim Laporan</button>
+    </form>
+
+    <div class="filter-container">
+      <label for="filterShift">Filter Shift:</label>
+      <select id="filterShift">
+        <option value="">Semua</option>
+        <option value="1">1</option>
+        <option value="2">2</option>
+        <option value="3">3</option>
+      </select>
+
+      <label for="filterGrup">Filter Grup:</label>
+      <select id="filterGrup">
+        <option value="">Semua</option>
+        <option value="A">A</option>
+        <option value="B">B</option>
+        <option value="C">C</option>
+        <option value="D">D</option>
+      </select>
+
+      <button onclick="tampilkanData()">Tampilkan</button>
+    </div>
+
+    <table id="dataTable">
+      <thead>
+        <tr>
+          <th>Tanggal</th>
+          <th>Shift</th>
+          <th>Grup</th>
+          <th>PIC</th>
+          <th>Quality</th>
+          <th>Mechanical</th>
+          <th>Mold</th>
+          <th>Catatan</th>
+        </tr>
+      </thead>
+      <tbody id="history-body"></tbody>
+    </table>
+  </div>
+
+  <marquee behavior="scroll" direction="left" scrollamount="5" style="background: yellow; font-weight: bold; padding: 10px; font-size: 16px;">
+    Selalu berhati-hati dalam bekerja. Lakukan SPT dengan lengkap.
+  </marquee>
+
+  <script>
+    const scriptURL = 'https://script.google.com/macros/s/AKfycbyKA9XHFA6tanEpA4AtDyUhVWoMF4VSuUCfP_FqHZNJGRM8tIovroZqkni6s8qZM0y5/exec';
+
+    const form = document.getElementById('laporanForm');
+    form.addEventListener('submit', e => {
+      e.preventDefault();
+      const btn = form.querySelector('button');
+      btn.disabled = true;
+      btn.innerText = 'Mengirim...';
+
+      fetch(scriptURL, { method: 'POST', body: new FormData(form) })
+        .then(response => {
+          alert('✅ Laporan berhasil dikirim!');
+          form.reset();
+          tampilkanData();
+          btn.disabled = false;
+          btn.innerText = 'Kirim Laporan';
+        })
+        .catch(error => {
+          alert('❌ Gagal mengirim laporan.');
+          console.error('Error!', error.message);
+          btn.disabled = false;
+          btn.innerText = 'Kirim Laporan';
+        });
+    });
+
+    function tampilkanData() {
+      fetch(scriptURL)
+        .then(res => res.json())
+        .then(data => {
+          const shift = document.getElementById('filterShift').value;
+          const grup = document.getElementById('filterGrup').value;
+          const tbody = document.getElementById('history-body');
+          tbody.innerHTML = '';
+
+          data.forEach(row => {
+            if ((shift === '' || row.shift === shift) && (grup === '' || row.grup === grup)) {
+              const tr = document.createElement('tr');
+              tr.innerHTML = `
+                <td>${row.tanggal}</td>
+                <td>${row.shift}</td>
+                <td>${row.grup}</td>
+                <td>${row.nama}</td>
+                <td>${row.quality_trouble}</td>
+                <td>${row.mechanical_trouble}</td>
+                <td>${row.mold_trouble}</td>
+                <td>${row.catatan}</td>
+              `;
+              tbody.appendChild(tr);
+            }
+          });
+        })
+        .catch(error => console.error('❌ Gagal mengambil data:', error));
+    }
+  </script>
+</body>
 </html>
+
