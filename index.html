@@ -172,63 +172,63 @@
     Selalu berhati-hati dalam bekerja. Lakukan SPT dengan lengkap.
   </marquee>
 
-  <script>
-    const scriptURL = 'https://script.google.com/macros/s/AKfycbyKA9XHFA6tanEpA4AtDyUhVWoMF4VSuUCfP_FqHZNJGRM8tIovroZqkni6s8qZM0y5/exec ';
+<script>
+  const scriptURL = 'https://script.google.com/macros/s/AKfycbyKA9XHFA6tanEpA4AtDyUhVWoMF4VSuUCfP_FqHZNJGRM8tIovroZqkni6s8qZM0y5/exec';
 
-    const form = document.getElementById('laporanForm');
-    form.addEventListener('submit', e => {
-      e.preventDefault();
-      const btn = form.querySelector('button');
-      btn.disabled = true;
-      btn.innerText = 'Mengirim...';
+  const form = document.getElementById('laporanForm');
+  form.addEventListener('submit', e => {
+    e.preventDefault();
+    const btn = form.querySelector('button');
+    btn.disabled = true;
+    btn.innerText = 'Mengirim...';
 
-      fetch(scriptURL, { method: 'POST', body: new FormData(form) })
-        .then(response => {
-          alert('✅ Laporan berhasil dikirim!');
-          form.reset();
-          tampilkanData();
-          btn.disabled = false;
-          btn.innerText = 'Kirim Laporan';
-        })
-        .catch(error => {
-          alert('❌ Gagal mengirim laporan.');
-          console.error('Error!', error.message);
-          btn.disabled = false;
-          btn.innerText = 'Kirim Laporan';
+    fetch(scriptURL, { method: 'POST', body: new FormData(form) })
+      .then(response => {
+        alert('✅ Laporan berhasil dikirim!');
+        form.reset();
+        tampilkanData();
+        btn.disabled = false;
+        btn.innerText = 'Kirim Laporan';
+      })
+      .catch(error => {
+        alert('❌ Gagal mengirim laporan.');
+        console.error('Error!', error.message);
+        btn.disabled = false;
+        btn.innerText = 'Kirim Laporan';
+      });
+  });
+
+  function tampilkanData() {
+    fetch(scriptURL)
+      .then(res => res.json())
+      .then(data => {
+        const shift = document.getElementById('filterShift').value;
+        const grup = document.getElementById('filterGrup').value;
+        const tbody = document.getElementById('history-body');
+        tbody.innerHTML = '';
+
+        data.forEach(row => {
+          if (
+            (shift === '' || row['Shift'] === shift) &&
+            (grup === '' || row['Grup'] === grup)
+          ) {
+            const tr = document.createElement('tr');
+            tr.innerHTML = `
+              <td>${row['Tanggal'] || ''}</td>
+              <td>${row['Shift'] || ''}</td>
+              <td>${row['Grup'] || ''}</td>
+              <td>${row['PIC'] || ''}</td>
+              <td>${row['Quality Trouble'] || ''}</td>
+              <td>${row['Mechanical Trouble'] || ''}</td>
+              <td>${row['Mold Trouble'] || ''}</td>
+              <td>${row['Catatan'] || ''}</td>
+            `;
+            tbody.appendChild(tr);
+          }
         });
-    });
-
-    function tampilkanData() {
-      fetch(scriptURL)
-        .then(res => res.json())
-        .then(data => {
-          const shift = document.getElementById('filterShift').value;
-          const grup = document.getElementById('filterGrup').value;
-          const tbody = document.getElementById('history-body');
-          tbody.innerHTML = '';
-
- data.forEach(row => {
-  if (
-    (shift === '' || row['Shift'] === shift) &&
-    (grup === '' || row['Group'] === grup)
-  ) {
-    const tr = document.createElement('tr');
-    tr.innerHTML = `
-      <td>${row['Tanggal'] || ''}</td>
-      <td>${row['Shift'] || ''}</td>
-      <td>${row['Grup'] || ''}</td>
-      <td>${row['PIC'] || ''}</td>
-      <td>${row['Quality Trouble'] || ''}</td>
-      <td>${row['Mechanical Trouble'] || ''}</td>
-      <td>${row['Mold Trouble'] || ''}</td>
-      <td>${row['Catatan'] || ''}</td>
-    `;
-    tbody.appendChild(tr);
-  }
-});
+      })
       .catch(error => console.error('❌ Gagal mengambil data:', error));
-    }
-      <button onclick="tampilkanData()">Tampilkan</button>
-  </script>
+  }
+</script>
 </body>
 </html>
