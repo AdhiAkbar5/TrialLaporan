@@ -3,89 +3,123 @@
 <head>
   <meta charset="UTF-8" />
   <title>Laporan Shift</title>
-  <style>
-    body {
-      font-family: Arial;
-      padding: 30px;
-      background-color: #f4f4f4;
-    }
+<style>
+  body {
+    font-family: Arial;
+    padding: 30px;
+    background-color: #f4f4f4;
+    margin: 0;
+  }
+  .container {
+    background: #fff;
+    padding: 20px;
+    border-radius: 10px;
+    width: 100%;
+    max-width: 1200px;
+    margin: auto;
+    text-align: center;
+    box-sizing: border-box;
+  }
+  .logo {
+    width: 150px;
+    margin-bottom: 10px;
+  }
+  h1 {
+    background-color: yellow;
+    color: black;
+    padding: 10px;
+    border-radius: 10px;
+    font-size: 1.5em;
+  }
+  label {
+    font-weight: bold;
+    display: block;
+    margin-top: 10px;
+    text-align: left;
+  }
+  input, select, textarea {
+    width: 100%;
+    padding: 8px;
+    margin-top: 5px;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+    box-sizing: border-box;
+  }
+  button {
+    margin-top: 20px;
+    background: #28a745;
+    color: #fff;
+    padding: 10px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+  }
+  button:hover {
+    background: #218838;
+  }
+  .label-quality {
+    background-color: yellow;
+    color: black;
+  }
+  .label-mechanical {
+    background-color: red;
+    color: white;
+  }
+  .label-mold {
+    background-color: green;
+    color: white;
+  }
+  .filter-container {
+    margin-top: 30px;
+    text-align: left;
+  }
+  .filter-container label {
+    margin-right: 10px;
+  }
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+    word-break: break-word;
+  }
+  th, td {
+    border: 1px solid #ccc;
+    padding: 8px;
+    text-align: left;
+    font-size: 0.9em;
+  }
+  th {
+    background-color: #28a745;
+    color: white;
+  }
+
+  @media (max-width: 768px) {
     .container {
-      background: #fff;
-      padding: 20px;
-      border-radius: 10px;
-      max-width: 800px;
-      margin: auto;
-      text-align: center;
-    }
-    .logo {
-      width: 150px;
-      margin-bottom: 10px;
+      padding: 10px;
     }
     h1 {
-      background-color: yellow;
-      color: black;
-      padding: 10px;
-      border-radius: 10px;
-    }
-    label {
-      font-weight: bold;
-      display: block;
-      margin-top: 10px;
-      text-align: left;
-    }
-    input, select, textarea {
-      width: 100%;
-      padding: 8px;
-      margin-top: 5px;
-      border-radius: 5px;
-      border: 1px solid #ccc;
-    }
-    button {
-      margin-top: 20px;
-      background: #28a745;
-      color: #fff;
-      padding: 10px;
-      border: none;
-      border-radius: 5px;
-      cursor: pointer;
-    }
-    button:hover {
-      background: #218838;
-    }
-    .label-quality {
-      background-color: yellow;
-      color: black;
-    }
-    .label-mechanical {
-      background-color: red;
-      color: white;
-    }
-    .label-mold {
-      background-color: green;
-      color: white;
-    }
-    .filter-container {
-      margin-top: 30px;
-      text-align: left;
-    }
-    .filter-container label {
-      margin-right: 10px;
-    }
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      margin-top: 20px;
+      font-size: 1.2em;
     }
     th, td {
-      border: 1px solid #ccc;
-      padding: 8px;
-      text-align: left;
+      font-size: 0.8em;
+      padding: 6px;
     }
-    th {
-      background-color: #28a745;
-      color: white;
-    }
-  </style>
+  }
+  th {white-space: nowrap;}
+  .table-wrapper {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;}
+
+{ width: 100%;
+  border-collapse: collapse;
+  table-layout: auto;}
+th, td 
+  { white-space: nowrap;
+  text-align: left;
+  vertical-align: top;
+  padding: 8px;
+  font-size: 14px;}
+</style>
 </head>
 <body onload="tampilkanData()">
   <div class="container">
@@ -95,7 +129,7 @@
 
     <form id="laporanForm">
       <label for="tanggal">Tanggal</label>
-      <input type="datetime-local" name="tanggal" required />
+      <input type="date" name="tanggal" required />
 
       <label for="shift">Shift</label>
       <select name="shift" required>
@@ -147,10 +181,14 @@
         <option value="C">C</option>
         <option value="D">D</option>
       </select>
-
-      <button onclick="tampilkanData()">Tampilkan</button>
+      <label for="filterTanggal">Filter Tanggal:</label>
+      <select id="filterTanggal">
+        <option value="">Semua</option>
+        <option value="today">Hari Ini</option>
+      </select>
+      <button onclick="filterData()">Tampilkan</button>
     </div>
-
+    <div class="table-wrapper">
     <table id="dataTable">
       <thead>
         <tr>
@@ -198,37 +236,92 @@
       });
   });
 
-  function tampilkanData() {
-    fetch(scriptURL)
-      .then(res => res.json())
-      .then(data => {
-        const shift = document.getElementById('filterShift').value;
-        const grup = document.getElementById('filterGrup').value;
-        const tbody = document.getElementById('history-body');
-        tbody.innerHTML = '';
+function tampilkanData() {
+  fetch(scriptURL)
+    .then(res => res.json())
+    .then(data => {
+      const shift = document.getElementById('filterShift').value;
+      const grup = document.getElementById('filterGrup').value;
+      const tbody = document.getElementById('history-body');
+      tbody.innerHTML = '';
 
-        data.forEach(row => {
-          if (
-            (shift === '' || row['Shift'] === shift) &&
-            (grup === '' || row['Grup'] === grup)
-          ) {
-            const tr = document.createElement('tr');
-            tr.innerHTML = `
-              <td>${row['Tanggal'] || ''}</td>
-              <td>${row['Shift'] || ''}</td>
-              <td>${row['Grup'] || ''}</td>
-              <td>${row['PIC'] || ''}</td>
-              <td>${row['Quality Trouble'] || ''}</td>
-              <td>${row['Mechanical Trouble'] || ''}</td>
-              <td>${row['Mold Trouble'] || ''}</td>
-              <td>${row['Catatan'] || ''}</td>
-            `;
-            tbody.appendChild(tr);
-          }
-        });
-      })
-      .catch(error => console.error('❌ Gagal mengambil data:', error));
+      data.forEach(row => {
+        if (
+          (shift === '' || row['shift'] === shift) &&
+          (grup === '' || row['grup'] === grup)
+        ) {
+          const tr = document.createElement('tr');
+            if (row['tanggal']) {
+  const tgl = new Date(row['tanggal']);
+  var tanggalFormatted = isNaN(tgl.getTime()) ? '' :
+    tgl.getDate().toString().padStart(2, '0') + '-' +
+    (tgl.getMonth() + 1).toString().padStart(2, '0') + '-' +
+    tgl.getFullYear();
+} else {var tanggalFormatted = '';}
+          tr.innerHTML = `
+            <td>${tanggalFormatted} </td>
+            <td>${row['shift'] || ''}</td>
+            <td>${row['grup'] || ''}</td>
+            <td>${row['nama'] || ''}</td>
+            <td>${row['quality_trouble'] || ''}</td>
+            <td>${row['mechanical_trouble'] || ''}</td>
+            <td>${row['mold_trouble'] || ''}</td>
+            <td>${row['catatan'] || ''}</td>
+          `;
+          tbody.appendChild(tr);
+        }
+      });
+    })
+    .catch(error => console.error('❌ Gagal mengambil data:', error));
+}
+</script>
+
+  <script>
+  function filterData() {
+    const shift = document.getElementById('filterShift').value;
+    const group = document.getElementById('filterGrup').value;
+    const tanggalFilter = document.getElementById('filterTanggal').value;
+
+    const rows = Array.from(document.querySelectorAll('#dataTable tbody tr'));
+    const today = new Date().toISOString().split('T')[0];
+
+    const filteredRows = rows.filter(row => {
+      const tanggalCell = row.children[0].textContent.trim().split('T')[0];
+      const shiftCell = row.children[1].textContent.trim();
+      const groupCell = row.children[2].textContent.trim();
+
+      const matchTanggal = tanggalFilter === "" || 
+                           (tanggalFilter === "today" && tanggalCell === today) || 
+                           (tanggalFilter === tanggalCell);
+      const matchShift = shift === "" || shiftCell === shift;
+      const matchGroup = group === "" || groupCell === group;
+
+      return matchTanggal && matchShift && matchGroup;
+    });
+
+    rows.forEach(row => row.style.display = 'none');
+    filteredRows.forEach(row => row.style.display = '');
   }
+</script>
+  <script>
+  window.addEventListener('DOMContentLoaded', () => {
+    const tanggalDropdown = document.getElementById('filterTanggal');
+    const rows = document.querySelectorAll('#dataTable tbody tr');
+    const tanggalSet = new Set();
+
+    rows.forEach(row => {
+      const tanggal = row.children[0].textContent.trim().split('T')[0]; // ambil hanya tanggal
+      tanggalSet.add(tanggal);
+    });
+
+    const tanggalList = Array.from(tanggalSet).sort().reverse();
+    tanggalList.forEach(tgl => {
+      const opt = document.createElement('option');
+      opt.value = tgl;
+      opt.textContent = tgl;
+      tanggalDropdown.appendChild(opt);
+    });
+  });
 </script>
 </body>
 </html>
